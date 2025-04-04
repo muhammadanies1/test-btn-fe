@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import TableHeader from "@/components/atoms/table/header/table-header";
 import TableRow from "@/components/atoms/table/row/table-row";
@@ -22,6 +22,22 @@ export default function Home() {
     return ["name", "price"];
   }, []);
 
+  const onChangeSearch = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (e.target.value === "") {
+        // console.log("kosong");
+        fetchProducts().then(setProducts);
+        return;
+      }
+      // console.log("ada isinya");
+      const filteredProducts = products.filter((product) =>
+        product.name.toLowerCase().includes(e.target.value.toLowerCase())
+      );
+      setProducts(filteredProducts);
+    },
+    [fetchProducts]
+  );
+
   return (
     <div className="flex justify-center items-center h-screen">
       <div className="bg-white w-96 h-[700px] rounded-2xl p-5 flex flex-col gap-5">
@@ -30,6 +46,9 @@ export default function Home() {
           <input
             placeholder="Cari Produk..."
             className="border-[1px] rounded-sm w-full placeholder:text-gray-400 px-2 text-black"
+            onChange={onChangeSearch}
+            type="text"
+            name="search"
           />
         </div>
         <table className="w-full border-collapse border border-gray-300 rounded-lg">
